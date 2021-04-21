@@ -1,0 +1,7 @@
+sudo dmidecode -t 17
+
+free
+
+nproc
+
+lscpu
