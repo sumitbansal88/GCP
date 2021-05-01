@@ -63,6 +63,29 @@ gsutil versioning set on gs://$BUCKET_NAME_1
 
 
 gsutil versioning get gs://$BUCKET_NAME_1
+ls -al setup.html
+
+nano setup.html
+
+gsutil cp -v setup.html gs://$BUCKET_NAME_1
+
+nano setup.html
+
+gsutil cp -v setup.html gs://$BUCKET_NAME_1
+gsutil ls -a gs://$BUCKET_NAME_1/setup.html
+export VERSION_NAME=<Enter VERSION name here>
+gsutil cp $VERSION_NAME recovered.txt
+ls -al setup.html
+
+ls -al recovered.txt
+
+
+mkdir firstlevel
+mkdir ./firstlevel/secondlevel
+cp setup.html firstlevel
+cp setup.html firstlevel/secondlevel
+gsutil rsync -r ./firstlevel gs://$BUCKET_NAME_1/firstlevel
+gsutil ls -r gs://$BUCKET_NAME_1/firstlevel
 
 
 
