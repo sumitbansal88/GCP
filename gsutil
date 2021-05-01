@@ -1,0 +1,71 @@
+export BUCKET_NAME_1=<enter bucket name 1 here>
+echo $BUCKET_NAME_1
+curl \
+http://hadoop.apache.org/docs/current/\
+hadoop-project-dist/hadoop-common/\
+ClusterSetup.html > setup.html
+cp setup.html setup2.html
+cp setup.html setup3.html
+gsutil cp setup.html gs://$BUCKET_NAME_1/
+gsutil acl get gs://$BUCKET_NAME_1/setup.html  > acl.txt
+cat acl.txt
+gsutil acl set private gs://$BUCKET_NAME_1/setup.html
+gsutil acl get gs://$BUCKET_NAME_1/setup.html  > acl2.txt
+cat acl2.txt
+gsutil acl ch -u AllUsers:R gs://$BUCKET_NAME_1/setup.html
+gsutil acl get gs://$BUCKET_NAME_1/setup.html  > acl3.txt
+cat acl3.txt
+
+
+
+python3 -c 'import base64; import os; print(base64.encodebytes(os.urandom(32)))'
+
+aP10ecqUpzkoRMRPE/uUIlqH0I/5W2fbn3pLVs17xDw=
+
+qZQ+pWtVFW4mK7eAWa4UrtuFqFmql9kybWpap8RRHM0=
+
+ls -al
+
+nano .boto
+
+Before:
+# encryption_key=
+
+After:
+encryption_key=tmxElCaabWvJqR7uXEWQF39DhWTcDvChzuCmpHe6sb0=
+
+
+gsutil cp setup2.html gs://$BUCKET_NAME_1/
+gsutil cp setup3.html gs://$BUCKET_NAME_1/
+
+gsutil lifecycle get gs://$BUCKET_NAME_1
+
+nano life.json
+
+{
+  "rule":
+  [
+    {
+      "action": {"type": "Delete"},
+      "condition": {"age": 31}
+    }
+  ]
+}
+
+gsutil lifecycle set life.json gs://$BUCKET_NAME_1
+
+gsutil lifecycle get gs://$BUCKET_NAME_1
+
+gsutil versioning get gs://$BUCKET_NAME_1
+
+
+gsutil versioning set on gs://$BUCKET_NAME_1
+
+
+gsutil versioning get gs://$BUCKET_NAME_1
+
+
+
+
+
+
