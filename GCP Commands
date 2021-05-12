@@ -20,3 +20,30 @@ gcloud compute instances create privatenet-us-vm --zone=us-central1-c --machine-
 gcloud compute instances list --sort-by=ZONE
 
 gcloud compute ssh vm-internal --zone us-central1-c --tunnel-through-iap
+
+
+gcloud container clusters create $my_cluster --num-nodes 3 --zone $my_zone --enable-ip-alias
+
+gcloud container clusters resize $my_cluster --zone $my_zone --num-nodes=4
+
+gcloud container clusters get-credentials $my_cluster --zone $my_zone
+
+nano ~/.kube/config
+
+kubectl cluster-info
+
+kubectl config current-context
+
+kubectl config get-contexts
+
+kubectl config use-context gke_${GOOGLE_CLOUD_PROJECT}_us-central1-a_standard-cluster-1
+
+kubectl top nodes
+
+source <(kubectl completion bash)
+
+kubectl create deployment --image nginx nginx-1
+
+kubectl cp ~/test.html $my_nginx_pod:/usr/share/nginx/html/test.html
+
+kubectl expose pod $my_nginx_pod --port 80 --type LoadBalancer
