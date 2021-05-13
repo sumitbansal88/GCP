@@ -1,0 +1,99 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: web
+  template:
+    metadata:
+      labels:
+        run: web
+    spec:
+      containers:
+      - image: gcr.io/google-samples/hello-app:1.0
+        name: web
+        ports:
+        - containerPort: 8080
+          protocol: TCP  
+        resources:
+          # You must specify requests for CPU to autoscale
+          # based on CPU utilization
+          requests:
+            cpu: "250m"
+            
+            
+            
+kubectl create -f web.yaml --save-config
+
+kubectl expose deployment web --target-port=8080 --type=NodePort
+
+kubectl autoscale deployment web --max 4 --min 1 --cpu-percent 1
+
+
+kubectl get hpa
+
+kubectl describe horizontalpodautoscaler web
+
+kubectl get horizontalpodautoscaler web -o yaml
+
+
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  annotations:
+    autoscaling.alpha.kubernetes.io/conditions:  [...]   autoscaling.alpha.kubernetes.io/current-metrics: [...]
+  creationTimestamp: 2018-11-14T02:59:28Z
+  name: web
+  namespace: default
+  resourceVersion: "14588"
+  selfLink: /apis/autoscaling/v1/namespaces/[...]
+spec:
+  maxReplicas: 4
+  minReplicas: 1
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: web
+  targetCPUUtilizationPercentage: 1
+status:
+  currentCPUUtilizationPercentage: 0
+  currentReplicas: 1
+  desiredReplicas: 1
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: loadgen
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: loadgen
+  template:
+    metadata:
+      labels:
+        app: loadgen
+    spec:
+      containers:
+      - name: loadgen
+        image: k8s.gcr.io/busybox
+        args:
+        - /bin/sh
+        - -c
+        - while true; do wget -q -O- http://web:8080; done
+
+
+kubectl apply -f loadgen.yaml
+
+kubectl scale deployment loadgen --replicas 0
+
+gcloud container node-pools create "temp-pool-1" \
+--cluster=$my_cluster --zone=$my_zone \
+--num-nodes "2" --node-labels=temp=true --preemptible
+
+kubectl get nodes -l temp=true
+
+
