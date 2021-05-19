@@ -1,0 +1,83 @@
+main.py
+
+mkdir gcp-course
+cd gcp-course
+gcloud source repos clone devops-repo
+cd devops-repo
+from flask import Flask, render_template, request
+
+app = Flask(__name__)
+
+@app.route("/")
+def main():
+    model = {"title": "Hello DevOps Fans."}
+    return render_template('index.html', model=model)
+
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', port=8080, debug=True, threaded=True)
+    
+layout.html    
+    
+<!doctype html>
+<html lang="en">
+<head>
+    <title>{{model.title}}</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+
+</head>
+<body>
+    <div class="container">
+
+        {% block content %}{% endblock %}
+
+        <footer></footer>
+    </div>
+</body>
+</html>    
+
+index.html
+
+{% extends "layout.html" %}
+{% block content %}
+<div class="jumbotron">
+    <div class="container">
+        <h1>{{model.title}}</h1>
+    </div>
+</div>
+{% endblock %}
+
+requirements.txt
+Flask==1.1.1
+
+cd ~/gcp-course/devops-repo
+git add --all
+
+git config --global user.email "you@example.com"
+git config --global user.name "Your Name"
+
+git commit -a -m "Initial Commit"
+
+git push origin master
+
+cd ~/gcp-course/devops-repo
+sudo pip3 install -r requirements.txt
+
+python3 main.py
+
+dockerfile -
+
+FROM python:3.7
+WORKDIR /app
+COPY . .
+RUN pip install gunicorn
+RUN pip install -r requirements.txt
+ENV PORT=80
+CMD exec gunicorn --bind :$PORT --workers 1 --threads 8 main:app
+
+cloud buils -
+
+gcloud builds submit --tag gcr.io/$DEVSHELL_PROJECT_ID/devops-image:v0.1 .
+
+An image will be created and pushed to conatiner registry. Deploy the image on compute instance and test.
+
